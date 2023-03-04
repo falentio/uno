@@ -1,0 +1,31 @@
+{
+  "name": "uno",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/falentio/uno.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/falentio/uno/issues"
+  },
+  "homepage": "https://github.com/falentio/uno#readme",
+  "workspaces": [
+    "apps/web",
+    "packages/core"
+  ],
+  "devDependencies": {
+    "@parcel/packager-ts": "^2.8.3",
+    "@parcel/transformer-typescript-types": "^2.8.3",
+    "@tsconfig/node16": "^1.0.3",
+    "typescript": "^4.9.5"
+  }
+}

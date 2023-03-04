@@ -1,0 +1,1 @@
+{"mappings":"AAAA,oBAAoB,CAAC,EAAE,MAAM,GAAG,MAAM,CAErC","sources":["packages/core/src/src/index.ts","packages/core/src/index.ts"],"sourcesContent":[null,"export function foo(a: string): string {\n\treturn \"fd\"\n}"],"names":[],"version":3,"file":"index.d.ts.map"}

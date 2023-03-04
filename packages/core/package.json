@@ -1,0 +1,19 @@
+{
+  "name": "@uno/core",
+  "version": "1.0.0",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "devDependencies": {
+    "parcel": "^2.8.3",
+    "tslib": "^2.5.0",
+    "vite": "^4.1.4",
+    "vitest": "^0.29.2"
+  },
+  "scripts": {
+    "test": "vitest",
+    "check": "tsc --noEmit",
+    "build": "parcel build"
+  }
+}

@@ -1,0 +1,1 @@
+{"mappings":"AAAO,SAAS,0CAAI,CAAS,EAAU;IACtC,OAAO;AACR","sources":["packages/core/src/index.ts"],"sourcesContent":["export function foo(a: string): string {\n\treturn \"fd\"\n}"],"names":[],"version":3,"file":"index.mjs.map"}
