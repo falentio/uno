@@ -14,7 +14,7 @@ export const cardType = [
 	"7",
 	"8",
 	"9",
-]
+] as const
 
 export type CardType = (typeof cardType)[number]
 
@@ -24,7 +24,7 @@ export const cardColor = [
 	"green",
 	"blue",
 	"yellow",
-]
+] as const
 
 export type CardColor = (typeof cardColor)[number]
 
@@ -34,15 +34,21 @@ export class Card {
 		public color: CardColor,
 	) {}
 
-	bytesTuple(): [number, number] {
-		return [
-			cardType.indexOf(this.type),
-			cardColor.indexOf(this.color),
-		]
+	static fromId(id: number) {
+		const t = cardType[id & 0xf]
+		if (!t) {
+			throw new Error("invalid cardType")
+		}
+		const c = cardColor[id >>> 4 & 0xf]
+		if (!c) {
+			throw new Error("invalid cardColor")
+		}
+		return new Card(t, c)
 	}
 
 	id() {
-		const [t, c] = this.bytesTuple()
-		return t << 8 | c
+		const t = cardType.indexOf(this.type)
+		const c = cardColor.indexOf(this.color)
+		return c << 4 | t
 	}
 }
