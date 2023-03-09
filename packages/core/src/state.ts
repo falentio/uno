@@ -7,7 +7,7 @@ export type StateEvents = {
 export type State<T> = T & Emitter<StateEvents> & StateMethod<T>
 export type StateMethod<T = {}> = {
 	reset(): void
-	change(k: Extract<keyof T, string>) 
+	change(k: Extract<keyof T, string>): void
 }
 
 export function state<T extends Record<string, unknown>>(v: T): State<T> {
@@ -16,7 +16,7 @@ export function state<T extends Record<string, unknown>>(v: T): State<T> {
 	const method = {
 		reset() {
 			for (const k of Object.keys(v)) {
-				s[k] = v[k]
+				s[k as keyof typeof s] = v[k] as any
 			}
 		},
 		change(k: Extract<keyof T, string>) {

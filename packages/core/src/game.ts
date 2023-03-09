@@ -7,9 +7,10 @@ import { Deck, StandardDeck } from "./deck"
 export type GameState = {
 	clockwise: boolean
 	started: boolean
+	ended: boolean
 	counter: number
 	players: Player[]
-	cardsHistory: [Card, Player][]
+	cardsHistory: [Card, Player | null][]
 	owner: Player
 	cardInDeck: number
 }
@@ -19,6 +20,7 @@ export type GameEvents = {
 	gameStart: [Game]
 	gameEnd: [Game]
 
+	cardDraw: [Game, Card[], Player]
 	cardPlayed: [Game, Card, Player]
 
 	turnStart: [Game, Player]
@@ -36,7 +38,7 @@ export class Game extends Emitter<GameEvents> {
 		players: [],
 		cardsHistory: [],
 		owner: new Player(""),
-		cardInDeck: 0.
+		cardInDeck: 108.
 	})
 
 	static currentPlayer(p: Player[], c: number) {
@@ -50,6 +52,9 @@ export class Game extends Emitter<GameEvents> {
 		this.state.on("change", (a) => {
 			this.emit("stateChange", a)
 		})
+		this.on("cardDraw", () => {
+			this.state.cardInDeck = this.deck.current().length
+		})
 		this.state.owner = owner
 		this.state.players.push(owner)
 		this.state.change("players")
@@ -61,7 +66,9 @@ export class Game extends Emitter<GameEvents> {
 
 	draw(c: number): Card[] {
 		try {
-			return this.deck.mustDraw(c)
+			const cards = this.deck.mustDraw(c)
+			this.emit("cardDraw", [this, cards, this.currentPlayer()])
+			return cards
 		} catch {
 			this.end()
 			throw new Error("game ended")
@@ -102,7 +109,7 @@ export class Game extends Emitter<GameEvents> {
 		this.state.started = true
 		this.state.ended = false
 		this.state.counter = Math.random() * 0xffff | 0
-		this.state.cardsHistory = this.draw(1)
+		this.state.cardsHistory = [[this.draw(1)[0], null]]
 		this.state.players.forEach(p => {
 			const cards = this.draw(7)
 			p.add(cards)
@@ -122,13 +129,13 @@ export class Game extends Emitter<GameEvents> {
 			throw new Error("can not play unknown card")
 		}
 
-		const prev = this.state.cardsHistory.at(-1)!
+		const [prev] = this.state.cardsHistory[this.state.cardsHistory.length -1]!
 		if (!card.playable(prev)) {
 			throw new Error("can not play this card")
 		}
 		
 		p.remove(card)
-		this.state.cardsHistory.push(card.clone())
+		this.state.cardsHistory.push([card.clone(), this.currentPlayer()])
 		this.emit("cardPlayed", [this, card, p])
 	}
 

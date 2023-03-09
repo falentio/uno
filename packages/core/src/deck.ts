@@ -26,7 +26,7 @@ export class Deck {
 	}
 
 	draw(c: number): Card[] {
-		return this.cards.splice(0, c)
+		return this.#current.splice(0, c)
 	}
 
 	mustDraw(c: number) {

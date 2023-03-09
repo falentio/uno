@@ -1,0 +1,25 @@
+{
+  "name": "@uno/server",
+  "version": "1.0.0",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "vitest",
+    "check": "tsc --noEmit",
+    "build": "parcel build"
+  },
+  "dependencies": {
+    "@uno/core": "^1.0.0",
+    "dprint": "^0.34.5",
+    "express": "^4.18.2",
+    "parcel": "^2.8.3",
+    "socket.io": "^4.6.1",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.5",
+    "vite": "^4.1.4",
+    "vitest": "^0.29.2",
+    "ws": "^8.12.1"
+  }
+}

@@ -23,7 +23,10 @@ describe("game", () => {
 	})
 
 	it("start", () => {
+		expect(game.state.cardInDeck).toEqual(108)
 		expect(() => game.start()).not.toThrow()
+		expect(game.state.cardInDeck).toEqual(108 - 7 * 4 - 2)
+		expect(game.state.cardsHistory.length).toEqual(1)
 		expect(game.state.started).toEqual(true)
 		expect(game.state.counter).not.toEqual(0)
 		expect(() => game.join("qux")).toThrow(/started/)
@@ -47,6 +50,7 @@ describe("game", () => {
 		expect(p.hand().length).toEqual(8)
 		expect(game.state.cardsHistory.at(-1)).toBeTruthy()
 		expect(game.state.cardsHistory.at(-1)!.equal(c)).toEqual(true)
+		expect(game.state.cardsHistory.length).toEqual(2)
 	})
 
 	it("turn-end-1", () => {
