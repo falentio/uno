@@ -39,6 +39,10 @@ export class Game extends Emitter<GameEvents> {
 		cardInDeck: 0.
 	})
 
+	static currentPlayer(p: Player[], c: number) {
+		return p[c % p.length]
+	}
+
 	constructor(
 		owner: Player,
 	) {
@@ -52,7 +56,16 @@ export class Game extends Emitter<GameEvents> {
 	}
 
 	currentPlayer(): Player {
-		return this.state.players[this.state.counter % this.state.players.length]
+		return Game.currentPlayer(this.state.players, this.state.counter)
+	}
+
+	draw(c: number): Card[] {
+		try {
+			return this.deck.mustDraw(c)
+		} catch {
+			this.end()
+			throw new Error("game ended")
+		}
 	}
 
 	join(name: string) {
@@ -78,20 +91,20 @@ export class Game extends Emitter<GameEvents> {
 		} else {
 			this.state.players = this.state.players.filter(i => i !== p)
 		}
+		this.state.change("players")
 		if (p === this.currentPlayer()) {
 			this.nextTurn()
 		}
-		this.state.change("players")
 		return p
 	}
 
 	start() {
 		this.state.started = true
 		this.state.ended = false
-		this.state.counter = Math.random() * 0xff | 0
-		this.state.cardsHistory = this.deck.mustDraw(1)
+		this.state.counter = Math.random() * 0xffff | 0
+		this.state.cardsHistory = this.draw(1)
 		this.state.players.forEach(p => {
-			const cards = this.deck.mustDraw(7)
+			const cards = this.draw(7)
 			p.add(cards)
 		})
 		this.emit("gameStart", [this])
@@ -123,7 +136,7 @@ export class Game extends Emitter<GameEvents> {
 		for (let i = 0; i < 4; i++) {
 			this.state.counter += 1
 			if (!this.currentPlayer().leave) {
-				const cards = this.deck.mustDraw(1)
+				const cards = this.draw(1)
 				this.currentPlayer().add(cards)
 				this.emit("turnStart", [this, this.currentPlayer()])
 				return 

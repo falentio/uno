@@ -38,7 +38,7 @@ describe("game", () => {
 		expect(p.hand().length).toEqual(cardCount)
 	})
 
-	it("play", () => {
+	it("play-1", () => {
 		const p = game.currentPlayer()
 		const c = new Card("black", "wild")
 		p.add([c])
@@ -47,5 +47,12 @@ describe("game", () => {
 		expect(p.hand().length).toEqual(8)
 		expect(game.state.cardsHistory.at(-1)).toBeTruthy()
 		expect(game.state.cardsHistory.at(-1)!.equal(c)).toEqual(true)
+	})
+
+	it("turn-end-1", () => {
+		const p = game.currentPlayer()
+		game.nextTurn()
+		expect(game.currentPlayer()).not.toEqual(p)
+		expect(game.currentPlayer().hand().length).toEqual(8)
 	})
 })

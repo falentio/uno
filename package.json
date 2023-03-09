@@ -20,7 +20,8 @@
   "homepage": "https://github.com/falentio/uno#readme",
   "workspaces": [
     "apps/web",
-    "packages/core"
+    "packages/core",
+    "apps/server"
   ],
   "devDependencies": {
     "@parcel/packager-ts": "^2.8.3",
