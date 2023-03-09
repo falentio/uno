@@ -30,8 +30,8 @@ export type CardColor = (typeof cardColor)[number]
 
 export class Card {
 	constructor(
-		public type: CardType,
-		public color: CardColor,
+		public readonly color: CardColor,
+		public readonly type: CardType,
 	) {}
 
 	static fromId(id: number) {
@@ -43,12 +43,47 @@ export class Card {
 		if (!c) {
 			throw new Error("invalid cardColor")
 		}
-		return new Card(t, c)
+		return new Card(c, t)
+	}
+
+	static fromIds(ids: number[]) {
+		return ids.map(id => Card.fromId(id)) as Card[]
+	}
+
+	clone() {
+		return new Card(this.color, this.type)
 	}
 
 	id() {
 		const t = cardType.indexOf(this.type)
 		const c = cardColor.indexOf(this.color)
 		return c << 4 | t
+	}
+
+	valid(): boolean {
+		if (this.color === "black") {
+			return ["wild", "draw-4"].includes(this.type)
+		}
+		return true
+	}
+
+	equal(card: Card) {
+		if (["wild", "draw-4"].includes(this.type)) {
+			return card.type === this.type
+		}
+		return this.type === card.type && this.color === card.color
+	}
+
+	playable(prev: Card) {
+		if (["wild", "draw-4"].includes(this.type)) {
+			return true
+		}
+		if (this.color === prev.color) {
+			return true
+		}
+		if (this.type === prev.type) {
+			return true
+		}
+		return false
 	}
 }

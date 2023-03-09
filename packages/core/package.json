@@ -5,6 +5,9 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "files": [
+    "./dist/"
+  ],
   "devDependencies": {
     "parcel": "^2.8.3",
     "tslib": "^2.5.0",
@@ -15,5 +18,8 @@
     "test": "vitest",
     "check": "tsc --noEmit",
     "build": "parcel build"
+  },
+  "dependencies": {
+    "dprint": "^0.34.5"
   }
 }
