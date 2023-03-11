@@ -3,6 +3,12 @@ import * as http from "http"
 import { Server } from "socket.io"
 import { Game, Player } from "@uno/core"
 
+function setupGame(game: Game, io: Server) {
+	game.on("stateChange", ([k, v]) => {
+		io.to(game.id).emit(`game:${game.id}:state`, k, v)
+	})
+}
+
 export function createServer() {
 	const app = express()
 	const server = http.createServer(app)
@@ -12,7 +18,37 @@ export function createServer() {
 
 	io.on("connection", socket => {
 		const url = new URL(socket.request.url || "", "https://uno/")
-		const name = url.searchParams.get("name") + "::" + performance.now().toString(36)
+		const name = url.searchParams.get("name") + "::" + (performance.now() * 0xff | 0).toString(36)
+
+		socket.on("disconnect", () => {
+			players.remove(name)
+			for (const g of games) {
+				g.leave(name)
+			}
+		})
+
+		socket.on("create", () => {
+			const player = new Player(name)
+			const game = new Game(player)
+			setupGame(game, io)
+			games.push(game)
+			socket.join(game.id)
+			io.to(game.id).emit(`game:${game.id}:join`, game.id)
+			socket.emit("created", game.id)
+		})
+
+		socket.on("join", id => {
+			const game = games.find(g => g.id === id)
+			game.join(name)
+			socket.join(game.id)
+			io.to(game.id).emit(`game:${game.id}:join`, game.id)
+		})
+
+		socket.on("leave", id => {
+			const game = games.find(g => g.id === id)
+			game.leave(name)
+			io.to(game.id).emit(`game:${game.id}:leave`, game.id)
+		})
 	})
 
 	// wss.on("connection", (ws, req) => {
@@ -44,7 +80,7 @@ export function createServer() {
 		app,
 		server,
 		io,
-		players,
-		games,
+		games: () => games,
+		players: () => players,
 	}
 }
