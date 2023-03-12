@@ -1,7 +1,7 @@
 import { WaitGroup } from "@jpwilliams/waitgroup";
 import { Card } from "@uno/core";
 import { io as Client } from "socket.io-client";
-import { describe, expect, it, afterEach, beforeAll } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createServer } from "../src/index";
 
 describe("server", () => {
@@ -20,14 +20,14 @@ describe("server", () => {
 			clientC = new Client(addr);
 		});
 
-		return () => server.close()
-	})
+		return () => server.close();
+	});
 
 	afterEach(() => {
-		clientA.offAny()
-		clientB.offAny()
-		clientC.offAny()
-	})
+		clientA.offAny();
+		clientB.offAny();
+		clientC.offAny();
+	});
 
 	it("create", async () => {
 		const wg = new WaitGroup();
