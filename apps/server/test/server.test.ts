@@ -24,6 +24,12 @@ describe("server", () => {
 		clientC = new Client(addr);
 	});
 
+	afterEach(() => {
+		clientA.offAny()
+		clientB.offAny()
+		clientC.offAny()
+	})
+
 	it("create", async () => {
 		const wg = new WaitGroup();
 		wg.add(1);
@@ -55,7 +61,6 @@ describe("server", () => {
 		});
 		clientB.emit("join", gameId);
 		await wg.wait();
-		clientB.offAny();
 	});
 
 	it("start", async () => {
@@ -82,7 +87,6 @@ describe("server", () => {
 			wg.done();
 		});
 		await wg.wait();
-		clientB.offAny()
 	});
 
 	it("leave", async () => {
