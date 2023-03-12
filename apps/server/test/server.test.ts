@@ -1,14 +1,8 @@
 import { WaitGroup } from "@jpwilliams/waitgroup";
 import { Card } from "@uno/core";
 import { io as Client } from "socket.io-client";
-import { describe, expect, it, afterEach } from "vitest";
+import { describe, expect, it, afterEach, beforeAll } from "vitest";
 import { createServer } from "../src/index";
-
-const defer = () => {
-	let resolve;
-	const p = new Promise<unknown[]>(r => resolve = r);
-	return [p, (...a) => resolve(a)];
-};
 
 describe("server", () => {
 	const { server, io, app, games } = createServer();
@@ -16,13 +10,18 @@ describe("server", () => {
 	let clientB: Client;
 	let clientC: Client;
 	let gameId: string;
-	server.listen(() => {
-		const port = server.address().port;
-		const addr = `http://localhost:${port}`;
-		clientA = new Client(addr);
-		clientB = new Client(addr);
-		clientC = new Client(addr);
-	});
+
+	beforeAll(() => {
+		server.listen(() => {
+			const port = server.address().port;
+			const addr = `http://localhost:${port}`;
+			clientA = new Client(addr);
+			clientB = new Client(addr);
+			clientC = new Client(addr);
+		});
+
+		return () => server.close()
+	})
 
 	afterEach(() => {
 		clientA.offAny()
