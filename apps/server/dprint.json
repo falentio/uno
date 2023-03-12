@@ -1,0 +1,4 @@
+{
+    "includes": ["**/*.{ts,tsx,js,jsx,cjs,mjs,json,md,toml,dockerfile}"],
+    "extends": "../../dprint.json"
+}
