@@ -164,7 +164,7 @@ export class Game extends Emitter<GameEvents> {
 		const p = this.currentPlayer();
 		const [card] = this.state
 			.cardsHistory[this.state.cardsHistory.length - 1]!;
-		const hasDraw2 = !!player.hand().find(c => c.type === "draw-2");
+		const hasDraw2 = !!p.hand().find(c => c.type === "draw-2");
 		if (card.type === "draw-4") {
 			const cards = this.draw(4);
 			p.add(cards);
