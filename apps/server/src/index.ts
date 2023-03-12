@@ -1,7 +1,7 @@
 import express from "express"
 import * as http from "http"
 import { Server } from "socket.io"
-import { Game, Player } from "@uno/core"
+import { Game, Player, Card } from "@uno/core"
 
 function setupGame(game: Game, io: Server) {
 	game.on("stateChange", ([k, v]) => {
@@ -42,6 +42,23 @@ export function createServer() {
 			game.join(name)
 			socket.join(game.id)
 			io.to(game.id).emit(`game:${game.id}:join`, game.id)
+		})
+
+		socket.on("start", id => {
+			const game = games.find(g => g.id === id)
+			game.start()
+			io.to(game.id).emit(`game:${game.id}:start`, game.id)
+		})
+
+		socket.on("play", (id, card) => {
+			const game = games.find(g => g.id === id)
+			if (!game.hasPlayer(name)) {
+				socket.emit("error", "not participate this game")
+			}
+			if (game.currentPlayer().name !== name) {
+				socket.emit("error", "not your turn")
+			}
+			game.play(card)
 		})
 
 		socket.on("leave", id => {

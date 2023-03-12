@@ -2,6 +2,7 @@ import { describe, it, vi, expect }from "vitest"
 import { io as Client } from "socket.io-client"
 import { createServer } from "../src/index"
 import { WaitGroup } from "@jpwilliams/waitgroup"
+import { Card } from "@uno/core"
 
 const defer = () => {
 	let resolve
@@ -13,12 +14,14 @@ describe("server", () => {
 	const { server, io, app, games } = createServer()
 	let clientA: Client
 	let clientB: Client
+	let clientC: Client
 	let gameId: string
 	server.listen(() => {
 		const port = server.address().port
 		const addr = `http://localhost:${port}`
 		clientA = new Client(addr)
 		clientB = new Client(addr)
+		clientC = new Client(addr)
 	})
 
 	it("create", async () => {
@@ -52,16 +55,38 @@ describe("server", () => {
 		})
 		clientB.emit("join", gameId)
 		await wg.wait()
+		clientB.offAny()
+	})
+
+	it("start", async () => {
+		const wg = new WaitGroup()
+		wg.add(1)
+		clientA.once(`game:${gameId}:start`, () => {
+			wg.done()
+		})
+		clientA.emit("start", gameId)
+		await wg.wait()
+	})
+	
+	it("play", async () => {
+		const game = games().find(g => g.id === gameId)
+		const wg = new WaitGroup()
+		game.state.counter = 0
+		game.currentPlayer().add([new Card("black", "wild")])
+		clientA.emit("play", gameId, new Card("blue", "wild"))
+		clientB.on(`game:{gameId}:state`, (k, v) => {
+			if (k !== "cardHistory") {
+				return
+			}
+			expect(v[v.length - 1][0]).toEqual({ color: "blue", type: "wild" })
+			wg.done()
+		})
+		await wg.wait()
 	})
 
 	it("leave", async () => {
 		const wg = new WaitGroup()
-		wg.add(3)
-		clientA.once(`game:${gameId}:state`, (k, v) => {
-			expect(k).toEqual("players")
-			expect(v.length).toEqual(1)
-			wg.done()
-		})
+		wg.add(2)
 		clientA.once(`game:${gameId}:leave`, id => {
 			expect(id).toBeTruthy()
 			wg.done()

@@ -50,6 +50,10 @@ export class Card {
 		return ids.map(id => Card.fromId(id)) as Card[]
 	}
 
+	static clone(card: Card) {
+		return new Card(card.color, card.type)
+	}
+
 	clone() {
 		return new Card(this.color, this.type)
 	}

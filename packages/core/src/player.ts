@@ -23,4 +23,8 @@ export class Player {
 	hasCard(card: Card): boolean {
 		return !!this.hand().find(c => c.equal(card))
 	}
+
+	hasPlayableCard(prev: Card) {
+		return !!this.hand().find(c => c.playable(prev))
+	}
 }

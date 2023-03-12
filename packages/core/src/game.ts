@@ -60,6 +60,10 @@ export class Game extends Emitter<GameEvents> {
 		this.state.change("players")
 	}
 
+	hasPlayer(name: string) {
+		return !!this.state.players.find(p => p.name === name)
+	}
+
 	currentPlayer(): Player {
 		return Game.currentPlayer(this.state.players, this.state.counter)
 	}
@@ -99,6 +103,10 @@ export class Game extends Emitter<GameEvents> {
 			this.state.players = this.state.players.filter(i => i !== p)
 		}
 		this.state.change("players")
+		if (this.state.players.filter(p => !p.leave).length <= 1) {
+			this.end()
+			return p
+		}
 		if (p === this.currentPlayer()) {
 			this.nextTurn()
 		}
@@ -124,6 +132,10 @@ export class Game extends Emitter<GameEvents> {
 	}
 
 	play(card: Card) {
+		if (!this.state.started) {
+			throw new Error("not started")
+		}
+		card = Card.clone(card)
 		const p = this.currentPlayer()
 		if (!p.hasCard(card)) {
 			throw new Error("can not play unknown card")
@@ -133,10 +145,14 @@ export class Game extends Emitter<GameEvents> {
 		if (!card.playable(prev)) {
 			throw new Error("can not play this card")
 		}
-		
+
 		p.remove(card)
 		this.state.cardsHistory.push([card.clone(), this.currentPlayer()])
 		this.emit("cardPlayed", [this, card, p])
+
+		if (!p.hasPlayableCard(card)) {
+			this.nextTurn()
+		}
 	}
 
 	nextTurn() {
