@@ -149,6 +149,10 @@ export class Game extends Emitter<GameEvents> {
 
 		p.remove(card);
 		this.state.cardsHistory.push([card.clone(), this.currentPlayer()]);
+		this.state.change("cardsHistory")
+		if (card.type === "reverse") {
+			this.state.clockwise = !this.state.clockwise
+		}
 		this.emit("cardPlayed", [this, card, p]);
 
 		if (!p.hasPlayableCard(card)) {
@@ -156,12 +160,34 @@ export class Game extends Emitter<GameEvents> {
 		}
 	}
 
+	#turnStart() {
+		const p = this.currentPlayer()
+		const [card] = this.state
+			.cardsHistory[this.state.cardsHistory.length - 1]!;
+		const hasDraw2 = !!player.hand().find(c => c.type === "draw-2")
+		if (card.type === "draw-4") {
+			const cards = this.draw(4)
+			p.add(cards)
+			this.nextTurn()
+			return
+		}
+		if (card.type === "draw-2" && !hasDraw2) {
+			const cards = this.draw(2)
+			p.add(cards)
+			this.nextTurn()
+			return
+		}
+		if (card.type === "skip") {
+			this.nextTurn()
+			return
+		}
+	}
+
 	nextTurn() {
 		for (let i = 0; i < 4; i++) {
 			this.state.counter += 1;
 			if (!this.currentPlayer().leave) {
-				const cards = this.draw(1);
-				this.currentPlayer().add(cards);
+				this.#turnStart()
 				this.emit("turnStart", [this, this.currentPlayer()]);
 				return;
 			}
