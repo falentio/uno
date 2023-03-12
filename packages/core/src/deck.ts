@@ -1,40 +1,40 @@
-import type { CardColor } from "./card"
-import { Card } from "./card"
+import type { CardColor } from "./card";
+import { Card } from "./card";
 
 export class Deck {
-	cards: Card[] = []
-	#current: Card[] = []
+	cards: Card[] = [];
+	#current: Card[] = [];
 
 	constructor(cards: Card[]) {
-		this.cards = cards
-		this.reset()
+		this.cards = cards;
+		this.reset();
 	}
 
 	current() {
-		return Array.from(this.#current)
+		return Array.from(this.#current);
 	}
 
 	reset() {
-		this.#current = Array.from(this.cards)
-		this.shuffle()
+		this.#current = Array.from(this.cards);
+		this.shuffle();
 	}
 
 	shuffle() {
 		this.#current = this
 			.current()
-			.sort(() => Math.random() - 0.5)
+			.sort(() => Math.random() - 0.5);
 	}
 
 	draw(c: number): Card[] {
-		return this.#current.splice(0, c)
+		return this.#current.splice(0, c);
 	}
 
 	mustDraw(c: number) {
-		const card = this.draw(c)
+		const card = this.draw(c);
 		if (card.length < c) {
-			throw new Error("not enough card remaining")
+			throw new Error("not enough card remaining");
 		}
-		return card
+		return card;
 	}
 }
 
@@ -44,20 +44,20 @@ export class StandardDeck extends Deck {
 		new Card("black", "wild"),
 		new Card("black", "wild"),
 		new Card("black", "wild"),
-		
+
 		new Card("black", "draw-4"),
 		new Card("black", "draw-4"),
 		new Card("black", "draw-4"),
 		new Card("black", "draw-4"),
-		
+
 		...cardSets("red"),
 		...cardSets("green"),
 		...cardSets("blue"),
 		...cardSets("yellow"),
-	]
+	];
 
 	constructor() {
-		super(StandardDeck.cards)
+		super(StandardDeck.cards);
 	}
 }
 
@@ -88,5 +88,5 @@ function cardSets(color: CardColor): Card[] {
 		new Card(color, "reverse"),
 		new Card(color, "skip"),
 		new Card(color, "draw-2"),
-	]
+	];
 }
