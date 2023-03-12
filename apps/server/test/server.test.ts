@@ -1,7 +1,7 @@
 import { WaitGroup } from "@jpwilliams/waitgroup";
 import { Card } from "@uno/core";
 import { io as Client } from "socket.io-client";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, afterEach } from "vitest";
 import { createServer } from "../src/index";
 
 const defer = () => {
@@ -82,6 +82,7 @@ describe("server", () => {
 			wg.done();
 		});
 		await wg.wait();
+		clientB.offAny()
 	});
 
 	it("leave", async () => {
