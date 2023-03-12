@@ -55,7 +55,7 @@ export class Card {
 	}
 
 	clone() {
-		return new Card(this.color, this.type);
+		return Card.clone(this)
 	}
 
 	id() {
