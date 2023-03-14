@@ -1,4 +1,4 @@
-import { Emitter } from "./emitter";
+import { Emitter } from "@uno/emitter";
 
 export type StateEvents = {
 	change: [k: string, v: unknown];

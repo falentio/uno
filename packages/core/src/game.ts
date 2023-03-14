@@ -1,6 +1,6 @@
+import { Emitter } from "@uno/emitter";
 import { Card } from "./card";
 import { Deck, StandardDeck } from "./deck";
-import { Emitter } from "./emitter";
 import { Player } from "./player";
 import { State, state } from "./state";
 
