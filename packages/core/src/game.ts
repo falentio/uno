@@ -155,7 +155,7 @@ export class Game extends Emitter<GameEvents> {
 		}
 		this.emit("cardPlayed", [this, card, p]);
 
-		if (!p.hasPlayableCard(card)) {
+		if (!p.hasChainableCard(card)) {
 			this.nextTurn();
 		}
 	}
