@@ -21,12 +21,13 @@ describe("game", () => {
 	it("start", () => {
 		expect(game.state.cardInDeck).toEqual(108);
 		expect(() => game.start()).not.toThrow();
-		expect(game.state.cardInDeck).toEqual(108 - 7 * 4 - 2);
+		expect(game.state.cardInDeck).toEqual(108 - 7 * 4 - 1);
 		expect(game.state.cardsHistory.length).toEqual(1);
 		expect(game.state.started).toEqual(true);
 		expect(game.state.counter).not.toEqual(0);
 		expect(() => game.join("qux")).toThrow(/started/);
 		expect(game.state.cardsHistory.at(-1)).toBeTruthy();
+		expect(game.state.players.length).toEqual(4)
 	});
 
 	it.each(game.state.players)("player $name", (p) => {
@@ -41,11 +42,11 @@ describe("game", () => {
 		const p = game.currentPlayer();
 		const c = new Card("black", "wild");
 		p.add([c]);
-		expect(p.hand().length).toEqual(9);
-		expect(() => game.play(new Card("blue", "wild"))).not.toThrow();
 		expect(p.hand().length).toEqual(8);
+		expect(() => game.play(new Card("blue", "wild"))).not.toThrow();
+		expect(p.hand().length).toEqual(7);
 		expect(game.state.cardsHistory.at(-1)).toBeTruthy();
-		expect(game.state.cardsHistory.at(-1)!.equal(c)).toEqual(true);
+		expect(game.state.cardsHistory.at(-1)![0].equal(c)).toEqual(true);
 		expect(game.state.cardsHistory.length).toEqual(2);
 	});
 
@@ -53,6 +54,20 @@ describe("game", () => {
 		const p = game.currentPlayer();
 		game.nextTurn();
 		expect(game.currentPlayer()).not.toEqual(p);
-		expect(game.currentPlayer().hand().length).toEqual(8);
+		expect(game.currentPlayer().hand().length).toEqual(7);
 	});
 });
+
+describe("game calculateDraw", () => {
+	it.each([
+		[0, [{ type: "skip" }]],
+		[2, [{ type: "draw-2" }]],
+		[4, [{ type: "draw-4" }]],
+		[6, [{ type: "draw-4" }, { type: "draw-2" }]],
+		[8, [{ type: "draw-4" }, { type: "draw-4" }]],
+	] as [number, Card[]][])("draw count %i", (expected, history) => {
+		const h = history.map(c => [c, new Player()])
+		const c = Game.calculateDrawCount(h)
+		expect(c).toBe(expected)
+	})
+})

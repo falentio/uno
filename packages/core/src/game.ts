@@ -45,6 +45,24 @@ export class Game extends Emitter<GameEvents> {
 		return p[c % p.length];
 	}
 
+	static calculateDrawCount(history: [Card, Player][]) {
+		let draw = 0
+		for (const [card] of history) {
+			switch (card.type) {
+				case "draw-4":
+					draw += 4
+				break
+				case "draw-2":
+					draw += 2
+				break
+				default:
+					return draw
+				break
+			}
+		}
+		return draw
+	}
+
 	constructor(
 		owner: Player,
 	) {
@@ -60,6 +78,10 @@ export class Game extends Emitter<GameEvents> {
 		this.state.change("players");
 	}
 
+	calculateCardInDeck() {
+		this.state.cardInDeck = this.deck.current().length
+	}
+
 	hasPlayer(name: string) {
 		return !!this.state.players.find(p => p.name === name);
 	}
@@ -72,6 +94,7 @@ export class Game extends Emitter<GameEvents> {
 		try {
 			const cards = this.deck.mustDraw(c);
 			this.emit("cardDraw", [this, cards, this.currentPlayer()]);
+			this.calculateCardInDeck()
 			return cards;
 		} catch {
 			this.end();
@@ -166,7 +189,7 @@ export class Game extends Emitter<GameEvents> {
 			.cardsHistory[this.state.cardsHistory.length - 1]!;
 		const hasDraw2 = !!p.hand().find(c => c.type === "draw-2");
 		const hasDraw4 = !!p.hand().find(c => c.type === "draw-4");
-		const drawCount = this.#calculateDrawCount()
+		const drawCount = Game.calculateDrawCount(this.state.cardsHistory)
 		if (card.type === "draw-4" && !hasDraw4) {
 			const cards = this.draw(drawCount);
 			p.add(cards);
@@ -186,24 +209,6 @@ export class Game extends Emitter<GameEvents> {
 			this.nextTurn();
 			return;
 		}
-	}
-
-	#calculateDrawCount() {
-		let draw = 0
-		let i = 1
-		const len = this.state.cardsHistory.length
-		while (true) {
-			const card = this.state.cardsHistory[len - i++]
-			switch (card.type) {
-				case "draw-4":
-					draw += 4
-				case "draw-2":
-					draw += 2
-				default:
-					return draw
-			}
-		}
-		return draw
 	}
 
 	nextTurn() {
