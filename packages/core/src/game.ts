@@ -165,14 +165,19 @@ export class Game extends Emitter<GameEvents> {
 		const [card] = this.state
 			.cardsHistory[this.state.cardsHistory.length - 1]!;
 		const hasDraw2 = !!p.hand().find(c => c.type === "draw-2");
-		if (card.type === "draw-4") {
-			const cards = this.draw(4);
+		const hasDraw4 = !!p.hand().find(c => c.type === "draw-4");
+		const drawCount = this.#calculateDrawCount()
+		if (card.type === "draw-4" && !hasDraw4) {
+			const cards = this.draw(drawCount);
 			p.add(cards);
 			this.nextTurn();
 			return;
 		}
-		if (card.type === "draw-2" && !hasDraw2) {
-			const cards = this.draw(2);
+		if (
+			(card.type === "draw-4" && !hasDraw4) ||
+			(card.type === "draw-2" && !hasDraw4 && !hasDraw2)
+		) {
+			const cards = this.draw(drawCount);
 			p.add(cards);
 			this.nextTurn();
 			return;
@@ -181,6 +186,24 @@ export class Game extends Emitter<GameEvents> {
 			this.nextTurn();
 			return;
 		}
+	}
+
+	#calculateDrawCount() {
+		let draw = 0
+		let i = 1
+		const len = this.state.cardsHistory.length
+		while (true) {
+			const card = this.state.cardsHistory[len - i++]
+			switch (card.type) {
+				case "draw-4":
+					draw += 4
+				case "draw-2":
+					draw += 2
+				default:
+					return draw
+			}
+		}
+		return draw
 	}
 
 	nextTurn() {
