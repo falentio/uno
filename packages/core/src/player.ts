@@ -3,6 +3,7 @@ import { Card, CardType, CardColor } from "./card";
 export class Player {
 	#hand: Card[] = [];
 	leave = false;
+	active = true
 	constructor(
 		public name: string,
 	) {}
