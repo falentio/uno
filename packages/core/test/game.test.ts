@@ -31,11 +31,7 @@ describe("game", () => {
 	});
 
 	it.each(game.state.players)("player $name", (p) => {
-		let cardCount = 7;
-		if (game.currentPlayer() === p) {
-			cardCount++;
-		}
-		expect(p.hand().length).toEqual(cardCount);
+		expect(p.hand().length).toEqual(7);
 	});
 
 	it("play-1", () => {
@@ -60,11 +56,15 @@ describe("game", () => {
 
 describe("game calculateDraw", () => {
 	it.each([
+		[0, [{ type: "0" }]],
 		[0, [{ type: "skip" }]],
+		[0, [{ type: "reverse" }]],
 		[2, [{ type: "draw-2" }]],
 		[4, [{ type: "draw-4" }]],
+		[4, [{ type: "draw-2" }, { type: "draw-2" }]],
 		[6, [{ type: "draw-4" }, { type: "draw-2" }]],
 		[8, [{ type: "draw-4" }, { type: "draw-4" }]],
+		[16, [{ type: "draw-4" }, { type: "draw-4" }, { type: "draw-4" }, { type: "draw-4" }]],
 	] as [number, Card[]][])("draw count %i", (expected, history) => {
 		const h = history.map(c => [c, new Player()])
 		const c = Game.calculateDrawCount(h)

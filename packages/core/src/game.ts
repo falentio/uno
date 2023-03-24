@@ -185,8 +185,11 @@ export class Game extends Emitter<GameEvents> {
 
 	#turnStart() {
 		const p = this.currentPlayer();
-		const [card] = this.state
+		const [card, playerPlayed] = this.state
 			.cardsHistory[this.state.cardsHistory.length - 1]!;
+		if (!playerPlayed) {
+			return
+		}
 		const hasDraw2 = !!p.hand().find(c => c.type === "draw-2");
 		const hasDraw4 = !!p.hand().find(c => c.type === "draw-4");
 		const drawCount = Game.calculateDrawCount(this.state.cardsHistory)
