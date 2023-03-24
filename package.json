@@ -18,6 +18,7 @@
     "url": "https://github.com/falentio/uno/issues"
   },
   "homepage": "https://github.com/falentio/uno#readme",
+  "scripts": {},
   "workspaces": [
     "apps/web",
     "apps/server",
