@@ -22,7 +22,11 @@ function handleError(socket: Socket, e: unknown) {
 export function createServer() {
 	const app = express();
 	const server = http.createServer(app);
-	const io = new Server(server);
+	const io = new Server(server, {
+		cors: {
+			origin: "*",
+		},
+	});
 	const players = new Set<string>();
 	let games = [] as Game[];
 
