@@ -16,7 +16,7 @@ function handleError(socket: Socket, e: unknown) {
 		return;
 	}
 	console.error(e);
-	socket.emit("error", e.message || e);
+	socket.emit("error", (e as Error).message || e);
 }
 
 export function createServer() {
@@ -29,10 +29,13 @@ export function createServer() {
 	io.on("connection", socket => {
 		const url = new URL(socket.request.url || "", "https://uno/");
 		const name = url.searchParams.get("name");
-
+		if (!name) {
+			socket.emit("error", "name not provided")
+			return
+		}
 		socket.on("disconnect", () => {
 			try {
-				players.remove(name);
+				players.delete(name);
 				for (const g of games) {
 					g.leave(name);
 				}
@@ -58,6 +61,10 @@ export function createServer() {
 		socket.on("join", id => {
 			try {
 				const game = games.find(g => g.id === id);
+				if (!game) {
+					socket.emit("error", "game not found")
+					return
+				}
 				game.join(name);
 				socket.join(game.id);
 				io.to(game.id).emit(`game:${game.id}:join`, game.id);
@@ -69,6 +76,10 @@ export function createServer() {
 		socket.on("start", id => {
 			try {
 				const game = games.find(g => g.id === id);
+				if (!game) {
+					socket.emit("error", "game not found")
+					return
+				}
 				game.start();
 				io.to(game.id).emit(`game:${game.id}:start`, game.id);
 			} catch (e) {
@@ -79,6 +90,10 @@ export function createServer() {
 		socket.on("play", (id, card) => {
 			try {
 				const game = games.find(g => g.id === id);
+				if (!game) {
+					socket.emit("error", "game not found")
+					return
+				}
 				if (!game.hasPlayer(name)) {
 					socket.emit("error", "not participate this game");
 				}
@@ -94,6 +109,10 @@ export function createServer() {
 		socket.on("leave", id => {
 			try {
 				const game = games.find(g => g.id === id);
+				if (!game) {
+					socket.emit("error", "game not found")
+					return
+				}
 				game.leave(name);
 				io.to(game.id).emit(`game:${game.id}:leave`, game.id);
 			} catch (e) {
@@ -102,34 +121,13 @@ export function createServer() {
 		});
 	});
 
-	// wss.on("connection", (ws, req) => {
-	// 	const url = new URL(req.url, "https://uno/")
-	// 	const name = url.searchParams.get("name") + "::" + performance.now().toString(36)
-	// 	players.add(name)
-	// 	ws.on("message", data => {
-	// 		try {
-	// 			const { event, game, data } = JSON.parse(data)
-	// 			switch (event) {
-	// 				case "join": {
-	// 					const g = games.find(g => g.id === "game")
-	// 					g.join()
-	// 				}
-	// 			}
-	// 		} catch (e) {
-	// 			console.error(e)
-	// 		}
-	// 	})
-	// 	ws.on("close", () => {
-	// 		players.remove(name)
-	// 		for (const g of games) {
-	// 			g.leave(name)
-	// 		}
-	// 	})
-	// })
-
 	app.get("/health", (req, res) => {
 		res.status(200).end();
 	});
+
+	app.get("/game/list", (req, res) => {
+		res.json(games)
+	})
 
 	return {
 		app,
