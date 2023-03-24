@@ -27,10 +27,10 @@ describe("socket", () => {
 	beforeAll(() => {
 		server.listen(() => {
 			const port = server.address().port;
-			const addr = `http://localhost:${port}`;
-			clientA = new Client(addr);
-			clientB = new Client(addr);
-			clientC = new Client(addr);
+			const addr = `http://localhost:${port}?name=`;
+			clientA = new Client(addr + "A");
+			clientB = new Client(addr + "B");
+			clientC = new Client(addr + "C");
 		});
 		return () => server.close();
 	});
