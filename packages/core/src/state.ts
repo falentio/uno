@@ -22,17 +22,22 @@ export function state<T extends Record<string, unknown>>(v: T): State<T> {
 		change(k: Extract<keyof T, string>) {
 			e.emit("change", [k, s[k]]);
 		},
+		each(fn: (k: string, v: unknown) => void) {
+			for (const [k, v] of Object.entries(s)) {
+				fn(k, v)
+			}
+		},
 	};
 	return new Proxy(s, {
 		get(target, key, receivver) {
+			if (key in s) {
+				return s[key as keyof typeof s];
+			}
 			if (key in e) {
 				return e[key as keyof typeof e].bind(e);
 			}
 			if (key in method) {
 				return method[key as keyof typeof method];
-			}
-			if (key in s) {
-				return s[key as keyof typeof s];
 			}
 		},
 		set(target, key, value, receivver) {

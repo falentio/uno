@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:docker": "docker buildx build -t falentio/uno:latest -f deploy/Dockerfile ."
   },
   "repository": {
     "type": "git",
@@ -18,14 +18,12 @@
     "url": "https://github.com/falentio/uno/issues"
   },
   "homepage": "https://github.com/falentio/uno#readme",
-  "scripts": {
-    "build:docker": "docker buildx build -t falentio/uno:latest -f deploy/Dockerfile ."
-  },
   "workspaces": [
     "apps/web",
     "apps/server",
     "packages/core",
-    "packages/emitter"
+    "packages/emitter",
+    "packages/client"
   ],
   "devDependencies": {
     "@parcel/packager-ts": "^2.8.3",

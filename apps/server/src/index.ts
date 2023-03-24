@@ -33,16 +33,6 @@ export function createServer() {
 			socket.emit("error", "name not provided");
 			return;
 		}
-		socket.on("disconnect", () => {
-			try {
-				players.delete(name);
-				for (const g of games) {
-					g.leave(name);
-				}
-			} catch (e) {
-				handleError(socket, e);
-			}
-		});
 
 		socket.on("create", () => {
 			try {
@@ -68,6 +58,9 @@ export function createServer() {
 				game.join(name);
 				socket.join(game.id);
 				io.to(game.id).emit(`game:${game.id}:join`, game.id);
+				game.state.each((k, v) => {
+					socket.emit(`game:${game.id}:state`, k, v)
+				})
 			} catch (e) {
 				handleError(socket, e);
 			}
