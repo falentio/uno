@@ -24,7 +24,7 @@ export function state<T extends Record<string, unknown>>(v: T): State<T> {
 		},
 		each(fn: (k: string, v: unknown) => void) {
 			for (const [k, v] of Object.entries(s)) {
-				fn(k, v)
+				fn(k, v);
 			}
 		},
 	};

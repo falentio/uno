@@ -59,8 +59,8 @@ export function createServer() {
 				socket.join(game.id);
 				io.to(game.id).emit(`game:${game.id}:join`, game.id);
 				game.state.each((k, v) => {
-					socket.emit(`game:${game.id}:state`, k, v)
-				})
+					socket.emit(`game:${game.id}:state`, k, v);
+				});
 			} catch (e) {
 				handleError(socket, e);
 			}

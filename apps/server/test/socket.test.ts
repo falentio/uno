@@ -49,8 +49,6 @@ describe("socket", () => {
 		ctx.errorCallback = fn;
 	});
 
-
-
 	describe("create", () => {
 		it.concurrent<Context>("should be able to create", async (ctx) => {
 			const wg = new WaitGroup();
