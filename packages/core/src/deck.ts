@@ -1,5 +1,6 @@
 import type { CardColor } from "./card";
 import { Card } from "./card";
+import { UnoError } from "./error"
 
 export class Deck {
 	cards: Card[] = [];
@@ -32,7 +33,7 @@ export class Deck {
 	mustDraw(c: number) {
 		const card = this.draw(c);
 		if (card.length < c) {
-			throw new Error("not enough card remaining");
+			throw new UnoError("not enough card remaining");
 		}
 		return card;
 	}

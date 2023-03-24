@@ -1,5 +1,6 @@
 import { Emitter } from "@uno/emitter";
 import { Card } from "./card";
+import { UnoError } from "./error";
 import { Deck, StandardDeck } from "./deck";
 import { Player } from "./player";
 import { State, state } from "./state";
@@ -98,16 +99,16 @@ export class Game extends Emitter<GameEvents> {
 			return cards;
 		} catch {
 			this.end();
-			throw new Error("game ended");
+			throw new UnoError("game ended");
 		}
 	}
 
 	join(name: string) {
 		if (this.state.started) {
-			throw new Error("can not join started game");
+			throw new UnoError("can not join started game");
 		}
 		if (this.state.players.length >= 4) {
-			throw new Error("game fulll");
+			throw new UnoError("game fulll");
 		}
 		const p = new Player(name);
 		this.state.players.push(p);
@@ -156,18 +157,18 @@ export class Game extends Emitter<GameEvents> {
 
 	play(card: Card) {
 		if (!this.state.started) {
-			throw new Error("not started");
+			throw new UnoError("not started");
 		}
 		card = Card.clone(card);
 		const p = this.currentPlayer();
 		if (!p.hasCard(card)) {
-			throw new Error("can not play unknown card");
+			throw new UnoError("can not play unknown card");
 		}
 
 		const [prev] = this.state
 			.cardsHistory[this.state.cardsHistory.length - 1]!;
 		if (!card.playable(prev)) {
-			throw new Error("can not play this card");
+			throw new UnoError("can not play this card");
 		}
 
 		p.remove(card);
@@ -222,6 +223,6 @@ export class Game extends Emitter<GameEvents> {
 			}
 		}
 
-		throw new Error("all player already leave");
+		throw new UnoError("all player already leave");
 	}
 }
