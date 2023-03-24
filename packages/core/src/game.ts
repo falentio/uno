@@ -46,9 +46,12 @@ export class Game extends Emitter<GameEvents> {
 		return p[c % p.length];
 	}
 
-	static calculateDrawCount(history: [Card, Player][]) {
+	static calculateDrawCount(history: [Card, Player | null][]) {
 		let draw = 0;
-		for (const [card] of history) {
+		for (const [card, p] of history) {
+			if (!p) {
+				return draw
+			}
 			switch (card.type) {
 				case "draw-4":
 					draw += 4;

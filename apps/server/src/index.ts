@@ -1,12 +1,22 @@
-import { Card, Game, Player } from "@uno/core";
+import { Card, Game, Player, UnoError } from "@uno/core";
 import express from "express";
 import * as http from "http";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 function setupGame(game: Game, io: Server) {
 	game.on("stateChange", ([k, v]) => {
 		io.to(game.id).emit(`game:${game.id}:state`, k, v);
 	});
+}
+
+function handleError(socket: Socket, e: unknown) {
+	console.error(e);
+	if (e instanceof UnoError) {
+		socket.emit("error", e.message);
+		return;
+	}
+	console.error(e);
+	socket.emit("error", e.message || e);
 }
 
 export function createServer() {
@@ -21,50 +31,74 @@ export function createServer() {
 		const name = url.searchParams.get("name");
 
 		socket.on("disconnect", () => {
-			players.remove(name);
-			for (const g of games) {
-				g.leave(name);
+			try {
+				players.remove(name);
+				for (const g of games) {
+					g.leave(name);
+				}
+			} catch (e) {
+				handleError(socket, e);
 			}
 		});
 
 		socket.on("create", () => {
-			const player = new Player(name);
-			const game = new Game(player);
-			setupGame(game, io);
-			games.push(game);
-			socket.join(game.id);
-			io.to(game.id).emit(`game:${game.id}:join`, game.id);
-			socket.emit("created", game.id);
+			try {
+				const player = new Player(name);
+				const game = new Game(player);
+				setupGame(game, io);
+				games.push(game);
+				socket.join(game.id);
+				io.to(game.id).emit(`game:${game.id}:join`, game.id);
+				socket.emit("created", game.id);
+			} catch (e) {
+				handleError(socket, e);
+			}
 		});
 
 		socket.on("join", id => {
-			const game = games.find(g => g.id === id);
-			game.join(name);
-			socket.join(game.id);
-			io.to(game.id).emit(`game:${game.id}:join`, game.id);
+			try {
+				const game = games.find(g => g.id === id);
+				game.join(name);
+				socket.join(game.id);
+				io.to(game.id).emit(`game:${game.id}:join`, game.id);
+			} catch (e) {
+				handleError(socket, e);
+			}
 		});
 
 		socket.on("start", id => {
-			const game = games.find(g => g.id === id);
-			game.start();
-			io.to(game.id).emit(`game:${game.id}:start`, game.id);
+			try {
+				const game = games.find(g => g.id === id);
+				game.start();
+				io.to(game.id).emit(`game:${game.id}:start`, game.id);
+			} catch (e) {
+				handleError(socket, e);
+			}
 		});
 
 		socket.on("play", (id, card) => {
-			const game = games.find(g => g.id === id);
-			if (!game.hasPlayer(name)) {
-				socket.emit("error", "not participate this game");
+			try {
+				const game = games.find(g => g.id === id);
+				if (!game.hasPlayer(name)) {
+					socket.emit("error", "not participate this game");
+				}
+				if (game.currentPlayer().name !== name) {
+					socket.emit("error", "not your turn");
+				}
+				game.play(card);
+			} catch (e) {
+				handleError(socket, e);
 			}
-			if (game.currentPlayer().name !== name) {
-				socket.emit("error", "not your turn");
-			}
-			game.play(card);
 		});
 
 		socket.on("leave", id => {
-			const game = games.find(g => g.id === id);
-			game.leave(name);
-			io.to(game.id).emit(`game:${game.id}:leave`, game.id);
+			try {
+				const game = games.find(g => g.id === id);
+				game.leave(name);
+				io.to(game.id).emit(`game:${game.id}:leave`, game.id);
+			} catch (e) {
+				handleError(socket, e);
+			}
 		});
 	});
 
