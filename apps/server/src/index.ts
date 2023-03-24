@@ -127,6 +127,10 @@ export function createServer() {
 	// 	})
 	// })
 
+	app.get("/health", (req, res) => {
+		res.status(200).end();
+	});
+
 	return {
 		app,
 		server,
