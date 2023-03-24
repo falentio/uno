@@ -16,6 +16,12 @@ export class Player {
 		return Array.from(this.#hand);
 	}
 
+	handSorted() {
+		return this.hand().sort((a, b) => {
+			return a.id() - b.id()
+		})
+	}
+
 	remove(c: Card) {
 		const toRm = this.#hand.find(cc => cc.equal(c));
 		this.#hand = this.#hand.filter(cc => toRm !== cc);
