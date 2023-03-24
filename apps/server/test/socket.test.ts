@@ -17,7 +17,7 @@ interface Context {
 	errorCallback: Mock<[], void>;
 }
 
-describe("server", () => {
+describe("socket", () => {
 	const { server, io, app, games } = createServer();
 	let clientA: Client;
 	let clientB: Client;
