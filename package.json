@@ -20,9 +20,8 @@
   "homepage": "https://github.com/falentio/uno#readme",
   "workspaces": [
     "apps/web",
-    "packages/core",
-    "packages/sse",
     "apps/server",
+    "packages/core",
     "packages/emitter"
   ],
   "devDependencies": {
