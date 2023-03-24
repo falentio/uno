@@ -18,8 +18,7 @@ export function createServer() {
 
 	io.on("connection", socket => {
 		const url = new URL(socket.request.url || "", "https://uno/");
-		const name = url.searchParams.get("name") + "::"
-			+ (performance.now() * 0xff | 0).toString(36);
+		const name = url.searchParams.get("name");
 
 		socket.on("disconnect", () => {
 			players.remove(name);
