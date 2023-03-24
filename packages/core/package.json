@@ -8,6 +8,13 @@
     "files": [
         "./dist/"
     ],
+    "exports": {
+        ".": {
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js"
+        },
+        "./package.json": "./package.json"
+    },
     "devDependencies": {
         "dprint": "^0.34.5",
         "parcel": "^2.8.3",

@@ -1,6 +1,6 @@
 import type { CardColor } from "./card";
 import { Card } from "./card";
-import { UnoError } from "./error"
+import { UnoError } from "./error";
 
 export class Deck {
 	cards: Card[] = [];

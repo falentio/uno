@@ -30,8 +30,8 @@ export function createServer() {
 		const url = new URL(socket.request.url || "", "https://uno/");
 		const name = url.searchParams.get("name");
 		if (!name) {
-			socket.emit("error", "name not provided")
-			return
+			socket.emit("error", "name not provided");
+			return;
 		}
 		socket.on("disconnect", () => {
 			try {
@@ -62,8 +62,8 @@ export function createServer() {
 			try {
 				const game = games.find(g => g.id === id);
 				if (!game) {
-					socket.emit("error", "game not found")
-					return
+					socket.emit("error", "game not found");
+					return;
 				}
 				game.join(name);
 				socket.join(game.id);
@@ -77,8 +77,8 @@ export function createServer() {
 			try {
 				const game = games.find(g => g.id === id);
 				if (!game) {
-					socket.emit("error", "game not found")
-					return
+					socket.emit("error", "game not found");
+					return;
 				}
 				game.start();
 				io.to(game.id).emit(`game:${game.id}:start`, game.id);
@@ -91,8 +91,8 @@ export function createServer() {
 			try {
 				const game = games.find(g => g.id === id);
 				if (!game) {
-					socket.emit("error", "game not found")
-					return
+					socket.emit("error", "game not found");
+					return;
 				}
 				if (!game.hasPlayer(name)) {
 					socket.emit("error", "not participate this game");
@@ -110,8 +110,8 @@ export function createServer() {
 			try {
 				const game = games.find(g => g.id === id);
 				if (!game) {
-					socket.emit("error", "game not found")
-					return
+					socket.emit("error", "game not found");
+					return;
 				}
 				game.leave(name);
 				io.to(game.id).emit(`game:${game.id}:leave`, game.id);
@@ -126,8 +126,8 @@ export function createServer() {
 	});
 
 	app.get("/game/list", (req, res) => {
-		res.json(games)
-	})
+		res.json(games);
+	});
 
 	return {
 		app,

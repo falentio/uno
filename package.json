@@ -18,7 +18,9 @@
     "url": "https://github.com/falentio/uno/issues"
   },
   "homepage": "https://github.com/falentio/uno#readme",
-  "scripts": {},
+  "scripts": {
+    "build:docker": "docker buildx build -t falentio/uno:latest -f deploy/Dockerfile ."
+  },
   "workspaces": [
     "apps/web",
     "apps/server",

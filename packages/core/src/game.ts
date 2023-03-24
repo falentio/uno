@@ -1,7 +1,7 @@
 import { Emitter } from "@uno/emitter";
 import { Card } from "./card";
-import { UnoError } from "./error";
 import { Deck, StandardDeck } from "./deck";
+import { UnoError } from "./error";
 import { Player } from "./player";
 import { State, state } from "./state";
 
@@ -50,7 +50,7 @@ export class Game extends Emitter<GameEvents> {
 		let draw = 0;
 		for (const [card, p] of history) {
 			if (!p) {
-				return draw
+				return draw;
 			}
 			switch (card.type) {
 				case "draw-4":

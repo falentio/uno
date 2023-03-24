@@ -2,6 +2,16 @@
 	"name": "@uno/web",
 	"version": "0.0.1",
 	"private": true,
+	"main": "build/index.js",
+	"exports": {
+		".": {
+			"import": "./build/handler.js"
+		},
+		"./*": {
+			"import": "./build/*"
+		},
+		"./package.json": "./package.json"
+	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -24,8 +34,5 @@
 		"vite": "^4.0.0",
 		"vitest": "^0.25.3"
 	},
-	"type": "module",
-	"dependencies": {
-		"@sveltejs/adapter-node": "^1.2.2"
-	}
+	"type": "module"
 }

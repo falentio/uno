@@ -1,19 +1,21 @@
 {
     "name": "@uno/server",
     "version": "1.0.0",
-    "source": "src/index.ts",
-    "main": "dist/index.js",
+    "source": "server.ts",
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
+    "type": "module",
     "scripts": {
         "test": "vitest",
         "check": "tsc --noEmit",
         "build": "parcel build",
         "format": "dprint fmt",
-        "dev": "watchexec -r -- tsx server.ts"
+        "dev": "watchexec -r -- tsx server.ts",
+        "start": "node dist/index.mjs"
     },
     "dependencies": {
         "@uno/core": "^1.0.0",
+        "@uno/web": "^0.0.1",
         "express": "^4.18.2",
         "socket.io": "^4.6.1",
         "ws": "^8.12.1"

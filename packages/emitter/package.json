@@ -8,6 +8,13 @@
     "files": [
         "./dist/"
     ],
+    "exports": {
+        ".": {
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js"
+        },
+        "./package.json": "./package.json"
+    },
     "scripts": {
         "test": "vitest",
         "format": "dprint fmt",
