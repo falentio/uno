@@ -27,7 +27,7 @@ describe("game", () => {
 		expect(game.state.counter).not.toEqual(0);
 		expect(() => game.join("qux")).toThrow(/started/);
 		expect(game.state.cardsHistory.at(-1)).toBeTruthy();
-		expect(game.state.players.length).toEqual(4)
+		expect(game.state.players.length).toEqual(4);
 	});
 
 	it.each(game.state.players)("player $name", (p) => {
@@ -64,10 +64,12 @@ describe("game calculateDraw", () => {
 		[4, [{ type: "draw-2" }, { type: "draw-2" }]],
 		[6, [{ type: "draw-4" }, { type: "draw-2" }]],
 		[8, [{ type: "draw-4" }, { type: "draw-4" }]],
-		[16, [{ type: "draw-4" }, { type: "draw-4" }, { type: "draw-4" }, { type: "draw-4" }]],
+		[16, [{ type: "draw-4" }, { type: "draw-4" }, { type: "draw-4" }, {
+			type: "draw-4",
+		}]],
 	] as [number, Card[]][])("draw count %i", (expected, history) => {
-		const h = history.map(c => [c, new Player()])
-		const c = Game.calculateDrawCount(h)
-		expect(c).toBe(expected)
-	})
-})
+		const h = history.map(c => [c, new Player()]);
+		const c = Game.calculateDrawCount(h);
+		expect(c).toBe(expected);
+	});
+});

@@ -55,7 +55,7 @@ export class Card {
 	}
 
 	clone() {
-		return Card.clone(this)
+		return Card.clone(this);
 	}
 
 	id() {

@@ -1,9 +1,9 @@
-import { Card, CardType, CardColor } from "./card";
+import { Card, CardColor, CardType } from "./card";
 
 export class Player {
 	#hand: Card[] = [];
 	leave = false;
-	active = true
+	active = true;
 	constructor(
 		public name: string,
 	) {}
@@ -18,8 +18,8 @@ export class Player {
 
 	handSorted() {
 		return this.hand().sort((a, b) => {
-			return a.id() - b.id()
-		})
+			return a.id() - b.id();
+		});
 	}
 
 	remove(c: Card) {
@@ -32,11 +32,11 @@ export class Player {
 	}
 
 	hasCardType(t: CardType[]): boolean {
-		return !!this.hand().find(c => t.includes(c.type))
+		return !!this.hand().find(c => t.includes(c.type));
 	}
 
 	hasCardColor(t: CardColor[]): boolean {
-		return !!this.hand().find(c => t.includes(c.color))
+		return !!this.hand().find(c => t.includes(c.color));
 	}
 
 	hasPlayableCard(prev: Card) {
@@ -57,9 +57,9 @@ export class Player {
 					"7",
 					"8",
 					"9",
-				])
+				]);
 			}
-			return c.playable(prev)
-		})
+			return c.playable(prev);
+		});
 	}
 }

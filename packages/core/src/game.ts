@@ -46,21 +46,21 @@ export class Game extends Emitter<GameEvents> {
 	}
 
 	static calculateDrawCount(history: [Card, Player][]) {
-		let draw = 0
+		let draw = 0;
 		for (const [card] of history) {
 			switch (card.type) {
 				case "draw-4":
-					draw += 4
-				break
+					draw += 4;
+					break;
 				case "draw-2":
-					draw += 2
-				break
+					draw += 2;
+					break;
 				default:
-					return draw
-				break
+					return draw;
+					break;
 			}
 		}
-		return draw
+		return draw;
 	}
 
 	constructor(
@@ -79,7 +79,7 @@ export class Game extends Emitter<GameEvents> {
 	}
 
 	calculateCardInDeck() {
-		this.state.cardInDeck = this.deck.current().length
+		this.state.cardInDeck = this.deck.current().length;
 	}
 
 	hasPlayer(name: string) {
@@ -94,7 +94,7 @@ export class Game extends Emitter<GameEvents> {
 		try {
 			const cards = this.deck.mustDraw(c);
 			this.emit("cardDraw", [this, cards, this.currentPlayer()]);
-			this.calculateCardInDeck()
+			this.calculateCardInDeck();
 			return cards;
 		} catch {
 			this.end();
@@ -188,14 +188,14 @@ export class Game extends Emitter<GameEvents> {
 		const [card, playerPlayed] = this.state
 			.cardsHistory[this.state.cardsHistory.length - 1]!;
 		if (!playerPlayed) {
-			return
+			return;
 		}
 		const hasDraw2 = !!p.hand().find(c => c.type === "draw-2");
 		const hasDraw4 = !!p.hand().find(c => c.type === "draw-4");
-		const drawCount = Game.calculateDrawCount(this.state.cardsHistory)
+		const drawCount = Game.calculateDrawCount(this.state.cardsHistory);
 		if (
-			(card.type === "draw-4" && !hasDraw4) ||
-			(card.type === "draw-2" && !hasDraw4 && !hasDraw2)
+			(card.type === "draw-4" && !hasDraw4)
+			|| (card.type === "draw-2" && !hasDraw4 && !hasDraw2)
 		) {
 			const cards = this.draw(drawCount);
 			p.add(cards);
@@ -203,8 +203,9 @@ export class Game extends Emitter<GameEvents> {
 			return;
 		}
 		if (
-			card.type === "skip" ||
-			card.type === "reverse" && this.state.players.filter(p => p.active).length === 2
+			card.type === "skip"
+			|| card.type === "reverse"
+				&& this.state.players.filter(p => p.active).length === 2
 		) {
 			this.nextTurn();
 			return;

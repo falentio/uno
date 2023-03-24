@@ -77,7 +77,7 @@ describe("server", () => {
 		const wg = new WaitGroup();
 		game.state.counter = 0;
 		game.currentPlayer().add([new Card("black", "wild")]);
-		wg.add(1)
+		wg.add(1);
 		clientA.emit("play", gameId, new Card("blue", "wild"));
 		clientB.on(`game:{gameId}:state`, (k, v) => {
 			if (k !== "cardHistory") {
