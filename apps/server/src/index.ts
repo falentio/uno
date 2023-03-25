@@ -7,7 +7,7 @@ import { Server, Socket } from "socket.io";
 
 function setupGame(game: Game, io: Server) {
 	game.on("stateChange", ([k, v]) => {
-		io.to(game.id).emit(`game:${game.id}:state`, k, v);
+		io.to(game.id).emit(`state`, game.id, k, v);
 	});
 }
 
@@ -49,7 +49,7 @@ export function createServer() {
 				setupGame(game, io);
 				games.push(game);
 				socket.join(game.id);
-				io.to(game.id).emit(`game:${game.id}:join`, game.id);
+				io.to(game.id).emit(`join`, game.id, name);
 				socket.emit("created", game.id);
 			} catch (e) {
 				handleError(socket, e);
@@ -65,10 +65,7 @@ export function createServer() {
 				}
 				game.join(name);
 				socket.join(game.id);
-				io.to(game.id).emit(`game:${game.id}:join`, game.id);
-				game.state.forEach((k, v) => {
-					socket.emit(`game:${game.id}:state`, k, v);
-				});
+				io.to(game.id).emit(`join`, game.id);
 			} catch (e) {
 				handleError(socket, e);
 			}
@@ -82,7 +79,7 @@ export function createServer() {
 					return;
 				}
 				game.start();
-				io.to(game.id).emit(`game:${game.id}:start`, game.id);
+				io.to(game.id).emit(`start`, game.id);
 			} catch (e) {
 				handleError(socket, e);
 			}
@@ -115,7 +112,7 @@ export function createServer() {
 					return;
 				}
 				game.leave(name);
-				io.to(game.id).emit(`game:${game.id}:leave`, game.id);
+				io.to(game.id).emit(`leave`, game.id);
 			} catch (e) {
 				handleError(socket, e);
 			}

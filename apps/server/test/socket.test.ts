@@ -69,16 +69,17 @@ describe("socket", () => {
 		it.concurrent<Context>("should be able to join", async (ctx) => {
 			const wg = new WaitGroup();
 			wg.add(3);
-			clientA.once(`game:${gameId}:state`, (k, v) => {
+			clientA.once(`state`, (id, k, v) => {
+				expect(id).toEqual(gameId)
 				expect(k).toEqual("players");
 				expect(v.length).toEqual(2);
 				wg.done();
 			});
-			clientA.once(`game:${gameId}:join`, id => {
+			clientA.once(`join`, id => {
 				expect(id).toBeTruthy();
 				wg.done();
 			});
-			clientB.once(`game:${gameId}:join`, id => {
+			clientB.once(`join`, id => {
 				expect(id).toBeTruthy();
 				wg.done();
 			});
@@ -92,7 +93,7 @@ describe("socket", () => {
 		it.concurrent<Context>("should be able to start", async (ctx) => {
 			const wg = new WaitGroup();
 			wg.add(1);
-			clientA.once(`game:${gameId}:start`, () => {
+			clientA.once(`start`, () => {
 				wg.done();
 			});
 			clientA.emit("start", gameId);
@@ -109,10 +110,11 @@ describe("socket", () => {
 			game.state.counter = 0;
 			game.currentPlayer().add([new Card("black", "wild")]);
 			clientA.emit("play", gameId, new Card("blue", "wild"));
-			clientB.on(`game:${gameId}:state`, (k, v) => {
+			clientB.on(`state`, (id, k, v) => {
 				if (k !== "cardsHistory") {
 					return;
 				}
+				expect(id).toEqual(gameId)
 				expect(v[v.length - 1][0]).toEqual({
 					color: "blue",
 					type: "wild",
@@ -120,10 +122,11 @@ describe("socket", () => {
 				expect(v.length).toEqual(2);
 				wg.done();
 			});
-			clientA.on(`game:${gameId}:state`, (k, v) => {
+			clientA.on(`state`, (id, k, v) => {
 				if (k !== "cardsHistory") {
 					return;
 				}
+				expect(id).toEqual(gameId)
 				expect(v[v.length - 1][0]).toEqual({
 					color: "blue",
 					type: "wild",
@@ -140,11 +143,11 @@ describe("socket", () => {
 		it.concurrent<Context>("should be able to leave", async (ctx) => {
 			const wg = new WaitGroup();
 			wg.add(2);
-			clientA.once(`game:${gameId}:leave`, id => {
+			clientA.once(`leave`, id => {
 				expect(id).toBeTruthy();
 				wg.done();
 			});
-			clientB.once(`game:${gameId}:leave`, id => {
+			clientB.once(`leave`, id => {
 				expect(id).toBeTruthy();
 				wg.done();
 			});
