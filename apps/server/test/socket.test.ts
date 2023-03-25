@@ -70,7 +70,7 @@ describe("socket", () => {
 			const wg = new WaitGroup();
 			wg.add(3);
 			clientA.once(`state`, (id, k, v) => {
-				expect(id).toEqual(gameId)
+				expect(id).toEqual(gameId);
 				expect(k).toEqual("players");
 				expect(v.length).toEqual(2);
 				wg.done();
@@ -114,7 +114,7 @@ describe("socket", () => {
 				if (k !== "cardsHistory") {
 					return;
 				}
-				expect(id).toEqual(gameId)
+				expect(id).toEqual(gameId);
 				expect(v[v.length - 1][0]).toEqual({
 					color: "blue",
 					type: "wild",
@@ -126,7 +126,7 @@ describe("socket", () => {
 				if (k !== "cardsHistory") {
 					return;
 				}
-				expect(id).toEqual(gameId)
+				expect(id).toEqual(gameId);
 				expect(v[v.length - 1][0]).toEqual({
 					color: "blue",
 					type: "wild",
