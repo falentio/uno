@@ -1,30 +1,27 @@
 import { io, Socket } from "socket.io-client"
-import { Game, Card, GameState, Player } from "@uno/core"
+import { Game, Card, GameState, Player, createGamState, State } from "@uno/core"
 
 export const nameSeparator = "::id::"
 
 export class GameController {
+	state = createGamState()
 	constructor(
 		public socket: Socket,
-		public game: Game,
+		public id: string,
 	) {}
 
-	state() {
-		return this.game.state
-	}
-
 	play(card: Card) {
-		this.socket.emit("play", this.game.id, card);
+		this.socket.emit("play", this.id, card);
 	}
 
 	end() {
-		this.socket.emit("end", this.game.id);
+		this.socket.emit("end", this.id);
 	}
 }
 
 export class UnoClient {
 	socket: Socket
-	games = new Map<string, Game>()
+	games = new Map<string, GameController>()
 	#player: Player
 	constructor(
 		public address: string,
@@ -64,7 +61,7 @@ export class UnoClient {
 				const game = new Game(this.#player)
 				game.id = gameId
 				this.games.set(gameId, game)
-				const ctrl = new GameController(this.socket, game)
+				const ctrl = new GameController(this.socket, gameId)
 				resolve(ctrl)
 			})
 		})
