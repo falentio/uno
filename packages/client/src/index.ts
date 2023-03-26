@@ -1,10 +1,10 @@
 import { io, Socket } from "socket.io-client"
-import { Game, Card, GameState, Player, createGamState, State } from "@uno/core"
+import { Game, Card, GameState, Player, createGameState, State } from "@uno/core"
 
 export const nameSeparator = "::id::"
 
 export class GameController {
-	state = createGamState()
+	state = createGameState()
 	constructor(
 		public socket: Socket,
 		public id: string,
@@ -58,10 +58,8 @@ export class UnoClient {
 		this.socket.emit("join", gameId);
 		return new Promise((resolve) => {
 			this.socket.once("join", gameId => {
-				const game = new Game(this.#player)
-				game.id = gameId
-				this.games.set(gameId, game)
 				const ctrl = new GameController(this.socket, gameId)
+				this.games.set(gameId, ctrl)
 				resolve(ctrl)
 			})
 		})
