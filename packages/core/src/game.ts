@@ -28,10 +28,8 @@ export type GameEvents = {
 	turnEnd: [Game, Player];
 };
 
-export class Game extends Emitter<GameEvents> {
-	id = Math.random().toString(36).slice(2, 10);
-	deck = new StandardDeck();
-	state = state<GameState>({
+export const createGamaeState = () => {
+	return state<GameState>({
 		clockwise: true,
 		started: false,
 		ended: false,
@@ -41,6 +39,12 @@ export class Game extends Emitter<GameEvents> {
 		owner: new Player(""),
 		cardInDeck: 108.,
 	});
+}
+
+export class Game extends Emitter<GameEvents> {
+	id = Math.random().toString(36).slice(2, 10);
+	deck = new StandardDeck();
+	state = createGamaeState()
 
 	static currentPlayer(p: Player[], c: number) {
 		return p[c % p.length];
