@@ -26,6 +26,7 @@
         "@jpwilliams/waitgroup": "^2.1.0",
         "@types/express": "^4.17.17",
         "@types/ws": "^8.5.4",
+        "@uno/client": "^1.0.0",
         "dprint": "^0.34.5",
         "parcel": "^2.8.3",
         "socket.io-client": "^4.6.1",

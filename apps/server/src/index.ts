@@ -7,12 +7,11 @@ import { Server, Socket } from "socket.io";
 
 function setupGame(game: Game, io: Server) {
 	game.on("stateChange", ([k, v]) => {
-		io.to(game.id).emit(`state`, game.id, k, v);
+		io.to(game.id).emit("state", game.id, k, v);
 	});
 }
 
 function handleError(socket: Socket, e: unknown) {
-	console.error(e);
 	if (e instanceof UnoError) {
 		socket.emit("error", e.message);
 		return;
@@ -49,7 +48,7 @@ export function createServer() {
 				setupGame(game, io);
 				games.push(game);
 				socket.join(game.id);
-				io.to(game.id).emit(`join`, game.id, name);
+				io.to(game.id).emit("join", game.id, name);
 				socket.emit("created", game.id);
 			} catch (e) {
 				handleError(socket, e);
@@ -65,7 +64,20 @@ export function createServer() {
 				}
 				game.join(name);
 				socket.join(game.id);
-				io.to(game.id).emit(`join`, game.id);
+				io.to(game.id).emit("join", game.id);
+			} catch (e) {
+				handleError(socket, e);
+			}
+		});
+
+		socket.on("spectate", id => {
+			try {
+				const game = games.find(g => g.id === id);
+				if (!game) {
+					socket.emit("error", "game not found");
+					return;
+				}
+				socket.join(game.id);
 			} catch (e) {
 				handleError(socket, e);
 			}
@@ -79,7 +91,7 @@ export function createServer() {
 					return;
 				}
 				game.start();
-				io.to(game.id).emit(`start`, game.id);
+				io.to(game.id).emit("start", game.id);
 			} catch (e) {
 				handleError(socket, e);
 			}
@@ -112,7 +124,7 @@ export function createServer() {
 					return;
 				}
 				game.leave(name);
-				io.to(game.id).emit(`leave`, game.id);
+				io.to(game.id).emit("leave", game.id, name);
 			} catch (e) {
 				handleError(socket, e);
 			}
